@@ -401,23 +401,20 @@ schema Policies:
 
 schema NetworkPolicy:
     enabled?: bool
+    fallbackDns?: str
+    outgoingConnections?: OutgoingConnections
+    extraControlPlaneRules?: [any]
+    extraWorkloadRules?: [any]
     annotations?: {str:str}
     labels?: {str:str}
-    fallbackDns?: str
-    controlPlane?: NetworkPolicyControlPlane
-    workload?: NetworkPolicyWorkload
 
-schema NetworkPolicyControlPlane:
-    ingress?: [any]
-    egress?: [any]
+schema OutgoingConnections:
+    """OutgoingConnections are the outgoing connections options for the vCluster workloads."""
+    ipBlock?: IPBlock
+    platform?: bool
 
-schema NetworkPolicyWorkload:
-    publicEgress?: NetworkPolicyWorkloadPublicEgress
-    ingress?: [any]
-    egress?: [any]
-
-schema NetworkPolicyWorkloadPublicEgress:
-    enabled?: bool
+schema IPBlock:
+    """IPBlock describes a particular CIDR that is allowed to the pods."""
     cidr?: str
     except?: [str]
 
@@ -513,10 +510,12 @@ schema ControlPlane:
 
 schema Distro:
     k8s?: DistroK8s
+    # [Deprecated] K3S holds K3s relevant configuration.
     k3s?: DistroK3s
 
 schema DistroK8s:
     enabled?: bool
+    # [Deprecated] Use controlPlane.distro.k8s.image.tag to specify the Kubernetes version instead.
     version?: str
     apiServer?: DistroContainerEnabled
     controllerManager?: DistroContainerEnabled
@@ -528,6 +527,7 @@ schema DistroK8s:
     securityContext?: {str:any}
 
 schema DistroK3s:
+    """[Deprecated] K3S holds K3s relevant configuration."""
     enabled?: bool
     token?: str
     image?: Image
@@ -1124,6 +1124,17 @@ schema RuleWithVerbs:
 
 schema ExternalConfig:
     [str]: any
+
+schema PlatformConfig:
+    """PlatformConfig holds configuration for vCluster Platform integration."""
+    apiKey?: PlatformAPIKey
+    project?: str
+
+schema PlatformAPIKey:
+    """PlatformAPIKey defines where to find the platform access key."""
+    secretName?: str
+    namespace?: str
+    createRBAC?: bool
 
 schema Telemetry:
     enabled?: bool
