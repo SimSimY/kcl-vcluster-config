@@ -1,0 +1,3 @@
+[submodule "vcluster-config-ref"]
+	path = vcluster-config-ref
+	url = https://github.com/loft-sh/vcluster-config.git
